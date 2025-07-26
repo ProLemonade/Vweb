@@ -20,6 +20,8 @@ from django.urls import include
 
 from web import views as views_web
 
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -36,7 +38,11 @@ urlpatterns = [
     path('test/codev', views_web.test_code_visu_refresh),
     path('test/data', views_web.test_data_list_refresh),
 
-    path('admin/', admin.site.urls),
     path("django_plotly_dash/", include("django_plotly_dash.urls")),
 
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
