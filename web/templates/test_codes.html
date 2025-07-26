@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>CodeS</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .process { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
+        .process h2 { color: #007BFF; }
+        .formula, .variable, .code, .application { margin-top: 10px; }
+        .application p { white-space: pre-wrap;}
+        pre { background: #272822; color: #f8f8f2; padding: 10px; border-radius: 5px; }
+    </style>
+
+</head>
+<body>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">刷新</button>
+    </form>
+
+    <h2>模拟代码分段解释</h2>
+
+    {% for proc in process_explanations %}
+        <div class="process">
+        <h2>{{ proc.name }}</h2>
+        <div class="code">
+            <h3>Process Code</h3>
+            <pre>{{ proc.process_code }}</pre>
+        </div>
+        <div class="application">
+            <h3>Process Application</h3>
+            <p>{{ proc.process_application }}</p>
+        </div>
+        <div class="formulas">
+            <h3>Process Formula</h3>
+            {% for formula in proc.formulas.all %}
+            <div class="formula">
+                <strong>Formula:</strong> {{ formula.formula_text }}<br>
+                {% for var in formula.variables.all %}
+                <div class="variable">
+                     {{ var.variable_name }} ({{ var.variable_unit }})：
+                     {{ var.variable_mean_zh }} ({{ var.variable_mean_en }})
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+        </div>
+    {% endfor %}
+
+</body>
+</html>

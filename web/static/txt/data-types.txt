@@ -1,0 +1,59 @@
+Time
+> <24h
+> =24h
+> >24h
+
+Grid
+> CoarseGrid
+> MiddleGrid
+> DenseGrid
+
+Depth
+> Shallow
+> Middle
+> Deep
+
+Bottom
+> No
+> Slope
+
+Coriolis
+> No
+> SameAsTide
+> LowLatitude
+> MidLatitude
+> HighLatitude
+
+Wind
+> No
+> WeakerWind
+> StrongerWind
+
+Wave
+> No
+> LowerWave
+> HigherWave
+
+Tide
+> T24+
+> T24-
+
+Heat
+> No
+> Absorption
+> Dissipation
+> DiurnalCycle
+
+InitialSpeed
+> No
+> U=0.25
+
+InitialTGradient
+> No
+> dTdz=0.1
+
+InitialDepthLayer
+> No
+> DeepMLD
+> MiddleMLD
+> ShallowMLD

@@ -1,0 +1,286 @@
+/*
+各页面都需引用的最基础模块
+设置了配色以及边栏气泡样式
+绑定scroll.js
+*/
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    width: 100%;
+    height: 100%;
+    background-color: #F8F9FC;
+    transition: all 0.3s ease;
+}
+:root {
+    --white: #ffffff;
+    --white-98: rgba(255, 255, 255, 0.98);
+    --white-80: rgba(255, 255, 255, 0.8);
+    --purple-dark: #695CFE;
+    --purple-lightle: #a483f4;
+    --purple-light: #A097FF;
+    --purple-lighte: #ece5fb;
+    --purple-lighter: #f3eefd;
+    --purple-white: #dddaff;
+    --grey-black: #333333;
+    --grey-dark: #666666;
+    --grey-middle: #cccccc;
+    --grey-white: #f0f0f0;
+    --grey-whiter: #f1f3f5;
+    --blue-dark: #2f73bc;
+    --blue-middle: #3683d6;
+    --blue-light: #7eb2eb;
+    --blue-lighter: #ecf5ff;
+    --blue-white: #ebf1ff;
+}
+
+
+
+.sidebar {
+    background:var(--purple-dark);
+    position: fixed;
+    height: auto;
+    width: 250px;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: all 0.3s ease;
+    border-radius: 10px;
+    padding: 10px 14px;
+    z-index: 100;
+}
+.upper {
+    padding: 20px 0px 0px 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.lower {
+    color: var(--purple-dark);
+    background-color: var(--white);
+    padding: 0px 0px 0px 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 8px;
+    position: relative;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+.sidebar-divider {
+    border-top: 1px solid var(--blue-white);
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+
+.icon {
+    color: white;
+    height: 100%;
+    display: flex;
+    min-width: 60px;
+    border-radius: 6px;
+    align-items: center;
+    justify-content: center;
+    font: 300 23px "FontAwesome";
+}
+.icon-lower {
+    min-height:50px;
+    min-width: 60px;
+    color: var(--purple-dark);
+}
+
+
+.text {
+    color: var(--blue-white);
+    opacity: 1;
+    font: 500 17px;
+    cursor: default;
+    white-space: nowrap; 
+    transition: all 0.3s ease;
+}
+.text-upper {
+    margin-top: 2px;
+    font: 600 18px " ";
+}
+.text-lower {
+    opacity: 0.8;
+    margin-top: 2px;
+    font: 550 18px " ";
+    color: var(--purple-light);
+}
+
+
+.close {
+    width: 88px;
+}
+.close .text {
+    opacity: 0;
+}
+.close ~ .content {
+    left: 110px;
+    width: calc(100% - 110px);
+}
+
+
+.toggle {
+    width: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+
+.menu {
+    display: flex;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    flex-direction: column;
+    max-height: 360px;
+    overflow-y: scroll;
+}
+.menu::-webkit-scrollbar {
+    display: none;
+}
+.menu li {
+    height: 50px;
+    display: flex;
+    list-style: none;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    align-items: center;
+}
+.menu li a {
+    background-color: transparent;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    list-style: none;
+    border-radius: 8px;
+    align-items: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+.menu li a:hover {
+    background-color: var(--white-80);
+}
+.menu li a:hover .icon,
+.menu li a:hover .text {
+    color: var(--purple-dark);
+}
+.menu li a.active {
+    background-color: var(--white-98);
+}
+.menu li a.active .icon,
+.menu li a.active .text {
+    color: var(--purple-dark);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.content {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    position: fixed;
+    height: 100vh;
+    left: 270px;
+    width: calc(100% - 270px);
+    transition: all 0.3s ease;
+}
+
+
+.bubble {
+    position: relative;
+    margin-right: 20px;
+    margin-left: 20px;
+    padding: 25px 0; /* 这里设置交错的是为了放滚动条*/
+    height: 90vh;
+    width: 100%;
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+.bubble-arrow {
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 10px;
+    transform: rotate(45deg);
+    background-color: white;
+    box-shadow: -2px 2px 5px rgba(0, 0, 0, 0.05);
+    transition: top 0.3s ease;
+    z-index: 100;
+}
+.bubble-content {
+    padding: 0 25px;
+    max-height: 100%;
+    position: relative;
+    overflow-y: auto;
+    display: none;
+}
+.bubble-content.active {
+    display: block;
+}
+.bubble-content::-webkit-scrollbar {
+    width: 6px;
+}
+.bubble-content::-webkit-scrollbar-track {
+    background: var(--white);
+    border-radius: 10px;
+}
+.bubble-content::-webkit-scrollbar-thumb {
+    background: var(--blue-white);
+    border-radius: 10px;
+}
+.bubble-content::-webkit-scrollbar-thumb:hover {
+    background: var(--purple-dark);
+}
+
+
+.bubble-inner {
+    min-height: 100%; 
+}
+.backToTop {
+    visibility: hidden;
+    cursor: pointer;
+    position: fixed;
+    right: 28px; 
+    bottom: calc(5vh + 8px);
+    z-index: 1000; 
+
+    width: 25px;
+    height: 25px;
+    border: none;
+    border-radius: 50%;
+    color: var(--white);
+    background-color: var(--purple-light);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.backToTop:hover {
+    background-color: var(--purple-dark);
+}
+.backToTop.active {
+    visibility: visible;
+}

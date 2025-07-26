@@ -1,0 +1,123 @@
+
+Example
+> Time-<24h
+> Coriolis-MidLatitude
+> Grid-DenseGrid; Depth-Shallow; Bottom-No
+> Wind-WeakerWind; Wave-LowerWave; Heat-DiurnalCycle 
+> InitialSpeed-U=0.25; InitialTGradient-dTdz=0.1; InitialDepthLayer-ShallowMLD
+
+.DifferentCondition_WindWave1
+> Time-=24h
+> Coriolis-No
+> Grid-MiddleGrid; Depth-Deep; Bottom-No
+> Wind-WeakerWind; Wave-LowerWave; Heat-No
+> InitialSpeed-U=0.25; InitialTGradient-No; InitialDepthLayer-No
+
+.DifferentCondition_WindWave2
+> Time-=24h
+> Coriolis-No
+> Grid-MiddleGrid; Depth-Deep; Bottom-No
+> Wind-WeakerWind; Wave-HigherWave; Heat-No
+> InitialSpeed-U=0.25; InitialTGradient-No; InitialDepthLayer-No
+
+.DifferentCondition_WindWave3
+> Time-=24h
+> Coriolis-No
+> Grid-MiddleGrid; Depth-Deep; Bottom-No
+> Wind-StrongerWind; Wave-HigherWave; Heat-No
+> InitialSpeed-U=0.25; InitialTGradient-No; InitialDepthLayer-No
+
+PeriodicCondition_TT
+> Time->24h
+> Coriolis-SameAsTide;
+> Grid-CoarseGrid; Depth-Shallow; Bottom-No;
+> Wind-WeakerWind; Wave-LowerWave; Heat-No;
+> InitialSpeed-No; InitialTGradient-No; InitialDepthLayer-No
+> Tide-T24+
+
+PeriodicCondition_Tt
+> Time->24h
+> Coriolis-SameAsTide;
+> Grid-CoarseGrid; Depth-Shallow; Bottom-No;
+> Wind-WeakerWind; Wave-LowerWave; Heat-No;
+> InitialSpeed-No; InitialTGradient-No; InitialDepthLayer-No
+> Tide-T24-
+
+.PeriodicCondition_TT
+> Time->24h
+> Coriolis-SameAsTide;
+> Grid-CoarseGrid; Depth-Shallow; Bottom-No;
+> Wind-WeakerWind; Wave-HigherWave; Heat-No;
+> InitialSpeed-No; InitialTGradient-No; InitialDepthLayer-No
+> Tide-T24+
+
+.PeriodicCondition_Tt
+> Time->24h
+> Coriolis-SameAsTide;
+> Grid-CoarseGrid; Depth-Shallow; Bottom-No;
+> Wind-WeakerWind; Wave-HigherWave; Heat-No;
+> InitialSpeed-No; InitialTGradient-No; InitialDepthLayer-No
+> Tide-T24-
+
+Origin
+> Time-<24h
+> Coriolis-No;
+> Grid-MiddleGrid; Depth-Deep; Bottom-No;
+> Wind-No; Wave-No; Heat-No;
+> InitialSpeed-No; InitialTGradient-No; InitialDepthLayer-No
+
+ControlVariable_InitialSpeed
+> Time-<24h
+> Coriolis-No;
+> Grid-MiddleGrid; Depth-Deep; Bottom-No;
+> Wind-No; Wave-No; Heat-No;
+> InitialSpeed-U=0.25; InitialTGradient-No; InitialDepthLayer-No
+
+ControlVariable_Wind
+> Time-=24h
+> Coriolis-No;
+> Grid-MiddleGrid; Depth-Deep; Bottom-No;
+> Wind-WeakerWind; Wave-No; Heat-No;
+> InitialSpeed-No; InitialTGradient-No; InitialDepthLayer-No
+
+ControlVariable_Wave
+> Time-=24h
+> Coriolis-No;
+> Grid-MiddleGrid; Depth-Deep; Bottom-No;
+> Wind-No; Wave-LowerWave; Heat-No;
+> InitialSpeed-No; InitialTGradient-No; InitialDepthLayer-No
+
+ControlVariable_Heat
+> Time-=24h
+> Coriolis-No;
+> Grid-MiddleGrid; Depth-Deep; Bottom-No;
+> Wind-No; Wave-No; Heat-DiurnalCycle;
+> InitialSpeed-No; InitialTGradient-No; InitialDepthLayer-No
+
+ControlVariable_Temp
+> Time-=24h
+> Coriolis-No;
+> Grid-MiddleGrid; Depth-Deep; Bottom-No;
+> Wind-No; Wave-No; Heat-No;
+> InitialSpeed-No; InitialTGradient-dTdz=0.1; InitialDepthLayer-MiddleMLD
+
+ControlVariable_Slope&Speed
+> Time-=24h
+> Coriolis-No;
+> Grid-MiddleGrid; Depth-Deep; Bottom-Slope;
+> Wind-No; Wave-No; Heat-No;
+> InitialSpeed-U=0.25; InitialTGradient-No; InitialDepthLayer-No
+
+ControlVariable_Coriolis&Wind
+> Time-=24h
+> Coriolis-MidLatitude;
+> Grid-MiddleGrid; Depth-Deep; Bottom-No;
+> Wind-WeakerWind; Wave-No; Heat-No;
+> InitialSpeed-No; InitialTGradient-No; InitialDepthLayer-No
+
+ControlVariable_Coriolis&Speed
+> Time-=24h
+> Coriolis-MidLatitude;
+> Grid-MiddleGrid; Depth-Deep; Bottom-No;
+> Wind-No; Wave-No; Heat-No;
+> InitialSpeed-U=0.25; InitialTGradient-No; InitialDepthLayer-No

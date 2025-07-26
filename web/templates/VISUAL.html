@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="../static/css/base-sidebar-content.css">
+    <link rel="stylesheet" href="../static/css/visu-card.css">
+
+    {% load plotly_dash %}
+    {% plotly_header %}
+
+
+</head>
+
+
+<body>
+
+    <div class="sidebar close">
+        <div class="upper">
+            <i class="fas fa-bars icon toggle" aria-hidden="true" ></i>
+            <span class="text text-upper">Visual</span>
+        </div>
+        <div class="menu">
+            <hr class="sidebar-divider">
+
+            <ul class="menu-links">
+                <li class="menu-link">
+                    <a href="#">
+                        <i class="fa fa-bar-chart icon" aria-hidden="true"></i>
+                        <span class="text">Static Result</span>
+                    </a>
+                </li>
+                <li class="menu-link">
+                    <a href="#">
+                        <i class="fa fa-line-chart icon" aria-hidden="true"></i>
+                        <span class="text">Iteractive Result</span>
+                    </a>
+                </li>
+            </ul>
+
+            <hr class="sidebar-divider">
+        </div>
+        <div class="lower">
+            <i class="fas fa-sign-out icon icon-lower"></i>
+            <span class="text text-lower">BACK HOME</span>
+        </div>
+    </div>
+
+    <div class="content">
+            <div class="bubble-arrow"></div>
+
+            <div class="bubble">
+
+                <div class="bubble-content">
+                <div class="bubble-inner">
+                    <div class="header">
+                        <select id="conditionSelect">
+                        </select>
+                        <button id="addBtn"> Add Column </button>
+                    </div>
+                    <div id="container"></div>
+                </div>
+                </div>
+
+                <div class="bubble-content">
+                <div class="bubble-inner">
+                    <div class="headerdash"></div>
+                    <div id="containerdash">
+                        <div id="threeD" class="carddash">
+                            {% load plotly_dash %}
+                            {% plotly_app name="threeD" %}
+                        </div>
+                        <div id="threeD_Ani" class="carddash">
+                            {% load plotly_dash %}
+                            {% plotly_app name="threeD_Ani" %}
+                        </div>
+                </div>
+                </div>
+
+            </div>
+    </div>
+
+
+    {% plotly_footer %}
+    {% plotly_message_pipe %}
+
+
+<script src="../static/js/sidebar.js"></script>
+<script src="../static/js/code-pacman.js"></script>
+<script src="../static/js/scroll-horizontal.js"></script>
+
+<script>const CONDITIONS = {{ conditions|safe }};</script>
+<script src="../static/js/visu-card.js"></script>
+
+<script>// 改进的JavaScript代码 - 基于距离判断
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('containerdash');
+    const header = document.querySelector('.headerdash');
+
+    // 获取距离header最近的卡片ID
+    function getClosestCardId() {
+        const cards = container.querySelectorAll('.carddash');
+        const containerRect = container.getBoundingClientRect();
+        const headerHeight = 60;
+
+        let closestCard = null;
+        let minDistance = Infinity;
+
+        cards.forEach(card => {
+            // 找位置
+            const cardRect = card.getBoundingClientRect();
+            const cardTopRelativeToContainer = cardRect.top - containerRect.top;
+
+            const distanceToHeader = Math.abs(cardTopRelativeToContainer);
+
+            // 判断离得最近的
+            if (distanceToHeader < minDistance) {
+                minDistance = distanceToHeader;
+                closestCard = card;
+            }
+        });
+
+        return closestCard ? closestCard.id : '';
+    }
+
+    function updateHeader() {
+        const closestCardId = getClosestCardId();
+        if (closestCardId) {
+            header.innerHTML = `<span class="header-text">${closestCardId}</span>`;
+        }
+    }
+
+    function debounce(func, wait) {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+    }
+
+    container.addEventListener('scroll', debounce(updateHeader, 30));
+    window.addEventListener('resize', debounce(updateHeader, 100));
+
+    setTimeout(updateHeader, 100);
+});
+</script>
+</body>
+
+</html>

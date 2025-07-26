@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>CodeV</title>
+</head>
+<body>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">刷新</button>
+    </form>
+
+    <h2>绘图代码及信息</h2>
+
+    {% for file in files %}
+        <h3>{{ file.name }} ({{ file.language }})</h3>
+            <ul>
+                <strong><p>{{ file.content_tags }}</p></strong>
+            </ul>
+
+            <ul>
+                <pre>{{ file.content_code }}</pre>
+            </ul>
+        <hr>
+    {% endfor %}
+</body>
+</html>

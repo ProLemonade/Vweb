@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>DataList</title>
+</head>
+<body>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">刷新</button>
+    </form>
+
+    <h2>数据类型及可选值</h2>
+    <ul>
+        {% for dtype in data_types %}
+            <li>
+                <strong>{{ dtype.name }}</strong>
+                <ul>
+                    {% for dvalue in dtype.values.all %}
+                        <li>{{ dvalue.value }}</li>
+                    {% empty %}
+                        <li>暂无数据值</li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% empty %}
+            <li>暂无数据类型</li>
+        {% endfor %}
+    </ul>
+
+    <h2>数据项及所选值</h2>
+    <ul>
+        {% for item in data_items %}
+            <li>
+                <strong>{{ item.name }}</strong>
+                <ul>
+                    {% for tag in item.tags.all %} 
+                        <li>{{ tag.type.name }} - {{ tag.value }}</li>
+                    {% empty %}
+                        <li>暂无标签</li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% empty %}
+            <li>暂无数据项</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

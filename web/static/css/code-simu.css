@@ -1,0 +1,225 @@
+.process-boxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    height: calc(90vh - 150px); /* 25*2+60+20 */
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.process-box {
+    min-width: 150px;
+    padding: 18px 18px;
+    width:24%;
+    height:48%;
+    background-color: var(--grey-whiter);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.process-box:hover {
+    background-color:var(--grey-white);
+    transform: translateY(2px);
+}
+
+.process-box.active {
+    background-color: var(--blue-middle);
+    color: white;
+    box-shadow: 0 4px 4px rgba(0,0,0,0.2);
+}
+
+.process-details {
+    min-height: 600px;
+    display: none;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05); /*水平 垂直偏移 模糊半径*/
+}
+
+
+.process-code {
+    margin-bottom: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    padding-right: 30px;
+}
+#phase-editor {
+    flex: 1;
+    min-width: 0;
+}
+.phase-copy {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    overflow: visible;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color:var(--purple-light);
+    background-color: var(--grey-white);
+    transition: all 0.2s ease;
+    z-index: 2;
+}
+.phase-copy:hover {
+    background-color: var(--grey-middle);
+}
+.code-phase-icon {
+    width: 1em;
+    height: 1em;
+    font-size: 18px;
+}
+.code-phase-icon.fa-clipboard {
+    font-size: 16px;
+}
+
+
+.process-explanation {
+    margin-bottom: 20px;
+    border: 2px solid var(--grey-white);
+    border-radius: 5px;
+    padding: 0 15px 15px 0;
+}
+.process-formula {
+    position: relative;
+    font-size: 18px;
+    color: #2d2d2d;
+    overflow-x: auto;
+}
+.process-formula::before {
+    position: absolute;
+    content: "•";
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    line-height: 1;
+    font-size: 24px;
+    color: #2f73bc;
+}
+.process-varibles {
+    margin-left: 30px;
+    border-left: 2px solid #e8f3ff;
+}
+.process-variables-table {
+    table-layout: fixed;
+    width: calc(100% - 30px);
+    border-collapse: collapse;
+}
+.process-variables-table tr {
+    border-bottom: 1px solid var(--grey-white);
+}
+.process-variables-table tr:last-child {
+    background-color: var(--blue-lighter);
+}
+.process-variables-table td {
+    padding: 6px 8px;
+    vertical-align: top;
+}
+.process-variables-table td:first-child {
+    width: 15%;
+    min-width: 80px;
+    font-weight: bold;
+    color: var(--blue-dark);
+    min-width: 100px;
+}
+.process-variables-table td:nth-child(2) {
+    width: 15%;
+    min-width: 100px;
+    color: var(--blue-middle);
+}
+.process-variables-table td:nth-child(3) {
+    width: 35%;
+    min-width: 150px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.process-variables-table td:nth-child(4) {
+    width: 35%;
+    min-width: 150px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+@media (max-width: 768px) {
+    .process-variables-table td {
+        min-width: 60px;
+    }
+    .process-variables-table td:first-child,
+    .process-variables-table td:nth-child(2) {
+        min-width: 100px;
+    }
+    .process-variables-table td:nth-child(3),
+    .process-variables-table td:nth-child(4) {
+        min-width: 120px;
+    }
+}
+
+
+.process-application {
+    color: var(--grey-black);
+    background-color: #f7f7f7;
+    line-height: 1.6;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+
+
+.simu-details{
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+}
+
+.set-code {
+    margin-bottom: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    padding-right: 30px;
+}
+
+
+
+.carousel-container {
+    position: relative;
+    width: 100%;
+    height: calc(90vh - 150px);
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.carousel-slides {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+.slide {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+.slide.active {
+    opacity: 1;
+    z-index: 1;
+}

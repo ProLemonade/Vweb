@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Origin</title>
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .bg {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle, #91defe 0%, #f0f8ff 100%);
+            max-height: 100vh;
+            overflow: hidden;
+            position: fixed;
+        }
+        .mask,
+        .circle,
+        .container,
+        .svg-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .mask {
+            width: 210px;
+            height: 210px;
+            border-radius: 50%;
+            box-shadow: 0 0 0 9999px #f5feff;
+            transition: all 1s ease-in-out;
+            pointer-events: none;
+            z-index: 50;
+        }
+        .circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: #91defe;
+            transition: all 1s ease-in-out;
+            filter: blur(5px);
+            z-index: 1;
+        }
+        .container {
+            z-index: 10;
+        }
+        .svg-container {
+            width: 400px;
+            height: 400px;
+            transition: all 1s ease-in-out;
+            cursor: pointer;
+            z-index: 20;
+        }
+        .svg-icon {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
+            z-index: 30;
+        }
+
+        .container-name {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 10px;
+            font-size: 18px;
+            color: #666666;
+            font-weight: bold;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.6);
+            transition: opacity 0.1s ease-in-out;
+            opacity: 0;
+            z-index: 40;
+        }
+
+        #amn .container-name, #ams .container-name {
+            right: 100px;
+        }
+        #as .container-name, #af .container-name {
+            left: 150px;
+        }
+        .active .circle {
+            width: 60px;
+            height: 60px;
+            background: white;
+        }
+        .active .mask {
+            width: 200vw;
+            height: 200%;
+            aspect-ratio: 1/1;
+        }
+        .active .svg-container {
+            width: 500px;
+            height: 500px;
+        }
+        .active #amn {
+            transform: translate(calc(-50% - 200px), calc(-50% + 100px));
+        }
+        .active #ams {
+            transform: translate(calc(-50% - 200px), calc(-50% - 100px));
+        }
+        .active #as {
+            transform: translate(calc(-50% + 150px), calc(-50% - 100px));
+        }
+        .active #af {
+            transform: translate(calc(-50% + 150px), calc(-50% + 100px));
+        }
+        .active .circle {
+            animation: float 3.5s ease-in-out infinite;
+            box-shadow: inset 0 0 20px #fff,
+                inset 10px 0 46px #eaf5fc,
+                inset -20px -60px 100px #91defe,
+                inset 0 50px 140px rgb(233, 252, 253),
+                0 0 90px #fff;
+        }
+
+
+
+        @keyframes float {
+            0% {
+                transform: translate(-50%, -50%) translatey(0px) rotate(-10deg);
+            }
+            50% {
+                transform: translate(-50%, -50%) translatey(-10px) rotate(10deg);
+            }
+            100% {
+                transform: translate(-50%, -50%) translatey(0px) rotate(-10deg);
+            }
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <div class="bg">
+        <div class="circle" id="circle"></div>
+
+        <div class="mask" id="maskHole"></div>
+
+        <div class="container" id="dragContainer">
+            <div class="svg-container" id="ams">
+                <img src="../static/svg/ams.svg" class="svg-icon">
+                <div class="container-name">DATA</div>
+            </div>
+            <div class="svg-container" id="as">
+                <img src="../static/svg/as.svg" class="svg-icon">
+                <div class="container-name">CODE</div>
+            </div>
+            <div class="svg-container" id="amn">
+                <img src="../static/svg/amn.svg" class="svg-icon">
+                <div class="container-name">VISUAL</div>
+            </div>
+            <div class="svg-container" id="af">
+                <img src="../static/svg/af.svg" class="svg-icon">
+                <div class="container-name">REPORT</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    const circle = document.querySelector('.circle');
+    const container = document.getElementById('dragContainer');
+    const containerNames = document.querySelectorAll('.container-name')
+
+    const urls = ['/data', '/code', '/visual', '/report'];
+
+    let isActive = false;
+    let svgContainers = document.querySelectorAll('.svg-container');
+
+    function handleSvgContainerClick(index) {
+        return function(e) {
+            e.stopPropagation();
+            window.location.href = urls[index];
+        };
+    }
+
+    container.addEventListener('click', function(e) {
+        if (!isActive) {
+            document.body.classList.add('active');
+            isActive = true;
+
+            setTimeout(() => {
+                document.querySelector('.active .circle').style.zIndex = "100";
+                document.querySelector('.active .circle').style.filter = "none";
+
+
+                containerNames.forEach(name => {
+                    name.style.opacity = '1';
+                });
+
+                svgContainers.forEach((container, index) => {
+                container.style.cursor = 'pointer';
+                const clickHandler = handleSvgContainerClick(index);
+                container.addEventListener('click', clickHandler);
+                container.clickHandler = clickHandler;
+                });
+            }, 300);
+        }
+    });
+
+
+    let clickTimer = null;
+
+    circle.addEventListener('click', function(e) {
+        if (!isActive) return;
+        e.stopPropagation();
+        if (clickTimer) return;
+
+        clickTimer = setTimeout(() => {
+            containerNames.forEach(name => {
+                name.style.opacity = '0';
+            });
+
+            const activeCircle = document.querySelector('.active .circle');
+            if (activeCircle) {
+                activeCircle.style.transition = 'none';
+                activeCircle.style.zIndex = "1";
+                activeCircle.style.filter = "blur(5px)";
+            }
+            setTimeout(() => {
+                activeCircle.style.transition = 'all 1s ease-in-out';
+
+                setTimeout(() => {
+                    document.body.classList.remove('active');
+                    isActive = false;
+
+                    svgContainers.forEach((container) => {
+                        container.style.cursor = 'default';
+                        if (container.clickHandler) {
+                            container.removeEventListener('click', container.clickHandler);
+                            delete container.clickHandler;
+                        }
+                    });
+                }, 105);
+            }, 5);
+            clickTimer = null;
+        }, 100);
+
+    });
+
+    circle.addEventListener('dblclick', function(e) {
+        if (!isActive) return;
+
+        e.stopPropagation();
+
+        if (clickTimer) {
+            clearTimeout(clickTimer);
+            clickTimer = null;
+        }
+
+        window.location.href = '/core';
+    });
+
+    // 拖动功能 照抄抄对了 喜
+    let isDragging = false;
+    let currentX = 0;
+    let currentY = 0;
+    let initialX = 0;
+    let initialY = 0;
+    let xOffset = 0;
+    let yOffset = 0;
+    container.addEventListener('mousedown', dragStart);
+    document.addEventListener('mouseup', dragEnd);
+    function dragStart(e) {
+        if (isActive) return;
+
+        initialX = e.clientX - xOffset;
+        initialY = e.clientY - yOffset;
+
+        isDragging = true;
+        e.stopPropagation();
+    }
+    function setTranslate(xPos, yPos, el) {
+        el.style.transform = `translate(calc(-50% + ${xPos}px), calc(-50% + ${yPos}px))`;
+    }
+    function dragEnd() {
+        initialX = currentX;
+        initialY = currentY;
+        isDragging = false;
+    }
+
+</script>
+
+
+</html>

@@ -1,0 +1,160 @@
+
+.header-container {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--blue-white);
+    margin-bottom: 20px; 
+    gap: 20px; 
+    padding: 0;
+}
+.pacman-box {
+    gap: 20px;
+    height: 40px;
+    display: flex;
+    overflow: visible;
+    align-items: center;
+}
+
+
+.pacman {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--purple-dark);
+    position: relative; 
+    overflow: visible;
+}
+.pacman-eye {
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;            
+    position: absolute;
+    left: 40%;
+    top: 12%;
+}
+.pacman::before {
+    position: absolute;
+    content: ''; /* 伪元素 搞不懂 总之logo就长这样 */
+    top: 50%;
+    right: -5px;
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+    border-right: 25px solid white; 
+    transform: translateY(-50%);
+}
+.pacman.active .pacman-eye {
+    box-shadow: none;
+}
+
+
+.peas,
+.beans {
+    gap: 20px;
+    display: flex;
+}
+.pea,
+.bean {
+    width: 20px;
+    height: 20px;
+    overflow: visible;
+    position: relative;
+    border-radius: 50%;
+    background-color: var(--blue-white);
+    transition: transform 0.3s, background-color 0.3s;
+    cursor: pointer;
+}
+.pea:hover,
+.bean:hover {
+    background-color:var(--purple-light);
+}
+.pea.active,
+.bean.active {
+    background-color: var(--purple-dark);
+}
+.pea-label,
+.bean-label {
+    font-size: 16px;
+    color: var(--purple-light);
+    transition: opacity 0.3s;
+    opacity: 0;
+}
+.pea-label.visible,
+.bean-label.visible {
+    opacity: 1;
+}
+
+
+.search-box {
+    height: 40px;
+    display: flex;
+    cursor: pointer;
+    border-radius: 6px;
+    align-items: center;
+    background-color: var(--blue-white);
+}
+.search-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 5px 10px;
+    background-color: var(--blue-white);
+    font-size: 17px;
+    font-weight: 500;
+}
+.search-button {
+    border: none;
+    padding: 5px 10px;
+    background-color: var(--blue-white);
+    cursor: pointer;
+}
+.search-icon{
+    color: var(--purple-dark);
+    height: 100%;
+    display: flex;
+    min-width: 60px;
+    align-items: center;
+    justify-content: center;
+    font: 300 23px "FontAwesome";
+}
+
+
+
+
+
+.grid-container {
+    display: grid; /* 网格布局  控制列数 控制列宽 最小值动态变化 最大平分剩余空间 */
+    grid-template-columns: repeat(auto-fill, minmax(clamp(230px, 33% - 20px, 100%), 1fr));
+    gap: 20px;
+}
+.img-box {
+    border: 1px solid var(--blue-white);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    height: 200px;
+}
+.img-box img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+.img-caption {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    bottom: -40px;
+    background-color: rgba(255, 255, 255, 0.7);
+    line-height: 40px;
+    text-align: center;
+    transition: bottom 0.3s ease;
+    cursor: pointer;
+    display: block;
+}
+.img-box:hover .img-caption {
+    bottom: 0;
+}

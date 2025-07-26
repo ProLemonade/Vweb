@@ -1,0 +1,246 @@
+.header {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--blue-white);
+    margin-bottom: 20px;
+    gap: 20px;
+    padding: 0 0 10px 0;
+}
+
+#conditionSelect {
+    padding: 8px 12px;
+    min-width: 200px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    flex-grow: 1;
+    max-width: 400px;
+
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--purple-dark);
+
+}
+#conditionSelect option {
+    font-size: 18px;
+    color: var(--grey-black);
+}
+#addBtn {
+    padding: 8px 16px;
+    cursor: pointer;
+    background-color: var(--blue-white);
+    border: none;
+    border-radius: 6px;
+
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--purple-dark);
+
+    transition: all 0.2s ease;
+}
+#addBtn:hover:not(.disabled) {
+    color:var(--grey-white);
+    background-color: var(--purple-dark);
+}
+#addBtn.disabled {
+    color: var(--purple-dark);
+    background-color:var(--grey-white);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+#container {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 10px 0;
+    width: 100%;
+}
+
+.card {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    position: relative;
+    transition: box-shadow 0.3s ease;
+}
+.card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+.card h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.1em;
+    padding-right: 30px; /* Make space for the close button */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.close-btn {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+    color: #999;
+    background: #f5f5f5;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+.close-btn:hover {
+    color: #333;
+    background: #e0e0e0;
+}
+
+.analysis-list {
+    margin-top: 15px;
+}
+.analysis-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+}
+.analysis-item:last-child {
+    border-bottom: none;
+}
+
+.check-btn {
+    padding: 5px 10px;
+    cursor: pointer;
+    background: #f0f0f0;
+    border: none;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+.check-btn:hover {
+    background: #e0e0e0;
+}
+.check-btn.active {
+    background-color: var(--purple-light);
+    color: white;
+}
+
+.image-container {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f7f7f7;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.image-container img {
+    max-width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.image-container .filename {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #666;
+}
+
+
+
+
+
+.bubble-content {
+    overflow: hidden;
+}
+.bubble-inner {
+    overflow: hidden;
+}
+
+.headerdash {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: white;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--blue-white);
+    margin-bottom: 20px;
+    gap: 20px;
+    padding: 0;
+}
+.header-text {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--purple-dark);
+}
+
+#containerdash {
+    height: 550px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+#containerdash::-webkit-scrollbar {
+    width: 6px;
+}
+#containerdash::-webkit-scrollbar-track {
+    background: var(--white);
+    border-radius: 10px;
+}
+#containerdash::-webkit-scrollbar-thumb {
+    background: var(--blue-white);
+    border-radius: 10px;
+}
+#containerdash::-webkit-scrollbar-thumb:hover {
+    background: var(--purple-dark);
+}
+
+.carddash {
+    width: 100%;
+    height: 100%;
+    margin-bottom: 20px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
+.carddash:last-child {
+    margin-bottom: 0;
+}
+
+
+.carddash > div,
+.carddash .dash-container,
+.carddash .main-content {
+    width: 100% !important;
+    height: 100% !important;
+    flex: 1;
+}
+.carddash .plotly-graph-div,
+.carddash .js-plotly-plot,
+.carddash .plot-container {
+    width: 100% !important;
+    height: 100% !important;
+}
+.carddash .dash-container,
+.carddash .main-content,
+.carddash > div {
+    overflow: hidden !important;
+}
+.carddash .dash-table-container {
+    height: 100% !important;
+    overflow: auto;
+}
+

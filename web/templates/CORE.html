@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Core</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+
+    <style>
+
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        body {
+            height: 2000px;
+            overflow-x: hidden;
+
+        }
+
+        #back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 40px;
+            height: 40px;
+            background: #3498db;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        body {
+            padding-left: 50px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+        }
+        .main {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 100px;
+        }
+
+        .content-section {
+            min-height: 100vh;
+            padding: 4rem 2rem 2rem;
+            scroll-margin-top: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .content-section h2 {
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #3498db;
+            padding-left: 1rem;
+            font-size: 1.8rem;
+        }
+        .equation {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 1.5rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .equation:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+        .derivation {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding-top: 1rem;
+        }
+
+        #sidebar {
+            position: fixed;
+            left: -240px;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background: #fff;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            transition: left 0.3s;
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        #sidebar.active {
+            left: 0;
+        }
+        #sidebar-toggle {
+            position: fixed;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #666;
+            font-size: 1rem;
+            z-index: 1001;
+            background: #fff;
+            padding: 8px;
+            border-radius: 4px;
+            transition: left 0.3s;
+        }
+        #sidebar.active #sidebar-toggle {
+            left: 250px;
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        #list-of-contents {
+            padding-left: 10px;
+        }
+
+        .list-li-all {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .list-li {
+            padding: 8px 0;
+            border-left: 2px solid #eee;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .list-li a {
+            color: #666;
+            text-decoration: none;
+            display: block;
+            padding-left: 1rem;
+            transition: color 0.2s;
+        }
+        .list-li.active {
+            border-left-color: #3498db;
+            background: #f8f9fa;
+        }
+        .list-li::after {
+            content: '';
+            position: absolute;
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            background: transparent;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        .list-li.active::after {
+            background: #3498db;
+        }
+
+    </style>
+</head>
+<body>
+
+    <aside id="sidebar">
+        <i class="fas fa-chevron-right" id="sidebar-toggle"></i>
+        <nav id="list-of-contents">
+            <ul class="list-li-all"></ul>
+        </nav>
+    </aside>
+
+    <div id="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <main>
+        <section id="section-1" class="content-section">
+            <h2>1. Basic formula</h2>
+
+            <div class="equation" onclick="toggleDerivation(this)">
+                <span class="katex-equation">\rho \left( \frac{\partial \mathbf{u}}{\partial t} + \mathbf{u} \cdot \nabla \mathbf{u} \right) = -\nabla p + \rho \nu \nabla^2 \mathbf{u} + \rho \mathbf{g}</span>
+                <div class="derivation">
+                    <p>……</p>
+                </div>
+            </div>
+
+
+            <div class="equation" onclick="toggleDerivation(this)">
+                <span class="katex-equation">B = \frac{g \alpha}{\rho c_p} (H_A - Q_h)</span>
+                <div class="derivation">
+                    <p><strong>浮力通量（B）…</strong>
+                </div>
+            </div>
+
+            <div class="equation" onclick="toggleDerivation(this)">
+                <span class="katex-equation">\delta_E = \sqrt{\frac{2\nu}{f}}</span>
+                <div class="derivation">
+                    <p>埃克曼层厚度…</p>
+                </div>
+            </div>
+
+            <div class="equation" onclick="toggleDerivation(this)">
+                <span class="katex-equation">\alpha = -\frac{1}{\rho} \left( \frac{\partial \rho}{\partial T} \right)_{S, p}</span>
+                <div class="derivation">
+                    <p>热膨胀系数…</p>
+                </div>
+            </div>
+
+            <div class="equation" onclick="toggleDerivation(this)">
+                <span class="katex-equation">h_{LL} \propto \frac{B \cdot \tau}{Q_u \cdot U_s}</span>
+                <div class="derivation">
+                    <p>混合层深度…</p>
+                </div>
+            </div>
+
+            <div class="equation" onclick="toggleDerivation(this)">
+                <span class="katex-equation">\zeta = \frac{\partial v}{\partial x} - \frac{\partial u}{\partial y}</span>
+                <div class="derivation">
+                    <p>涡度…</p>
+                </div>
+            </div>
+
+            <div class="equation" onclick="toggleDerivation(this)">
+                <span class="katex-equation"> N = - \frac{g}{\rho_0} \frac{\partial \rho}{\partial z} </span>
+                <div class="derivation">
+                    <p>浮力频率…</p>
+                </div>
+            </div>
+
+        </section>
+
+        <section id="section-2" class="content-section">
+            <h2>2. 地转平衡</h2>
+
+            <div class="equation" onclick="toggleDerivation(this)">
+                <span class="katex-equation">f u = -\frac{1}{\rho} \frac{\partial p}{\partial y}</span>
+                <div class="derivation">
+                    <p>...</p>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+<script>
+
+    function generateTOC() {
+        const sections = document.querySelectorAll('.content-section');
+        const tocList = document.querySelector('.list-li-all');
+
+        sections.forEach((section, index) => {
+            const title = section.querySelector('h2').textContent;
+            const listItem = document.createElement('li');
+            listItem.className = 'list-li';
+            listItem.innerHTML = `
+                <a href="#${section.id}">
+                    <span class="toc-number">${index + 1}.</span>
+                    ${title}
+                </a>
+            `;
+            tocList.appendChild(listItem);
+        });
+    }
+
+    function setupTOCNavigation() {
+        document.querySelectorAll('.list-li a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+    }
+
+    function setupIntersectionObserver() {
+        const sections = document.querySelectorAll('.content-section');
+        const tocLinks = document.querySelectorAll('.list-li a');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const matchingLink = Array.from(tocLinks).find(link =>
+                    link.getAttribute('href') === `#${entry.target.id}`
+                );
+
+                if (matchingLink) {
+                    matchingLink.parentElement.classList.toggle('active', entry.isIntersecting);
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '-40% 0px -40% 0px',
+            threshold: 0
+        });
+
+        sections.forEach(section => observer.observe(section));
+    }
+
+    // 公式渲染
+    function renderMath() {
+        const equations = document.getElementsByClassName('katex-equation');
+        Array.from(equations).forEach(element => {
+            katex.render(element.textContent, element, {
+                throwOnError: false,
+                displayMode: true
+            });
+        });
+    }
+
+    // 点击展开
+    function toggleDerivation(element) {
+        const derivation = element.querySelector('.derivation');
+        derivation.style.maxHeight = derivation.style.maxHeight ? null : derivation.scrollHeight + "px";
+    }
+
+    // 按顺序调用
+    document.addEventListener('DOMContentLoaded', () => {
+        generateTOC();
+        setupTOCNavigation();
+        setupBackToTop();
+        setupIntersectionObserver();
+        renderMath();
+
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('active');
+        });
+
+    });
+
+    // 返回顶部
+    function setupBackToTop() {
+        const btn = document.getElementById('back-to-top');
+        window.addEventListener('scroll', () => {
+            btn.style.opacity = window.scrollY > 500 ? 1 : 0;
+        });
+        btn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+</script>
+
+</body>
+</html>

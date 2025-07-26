@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DATASET</title>
+    <link rel="stylesheet" href="../static/css/base-sidebar-content.css">
+    <link rel="stylesheet" href="../static/css/data-info.css">
+    <link rel="stylesheet" href="../static/css/data-fliter.css">
+    <link rel="stylesheet" href="../static/css/data-contrast.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <style>
+        .data-show-more {
+            z-index: 100;
+            overflow: visible;
+            visibility: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 25px;
+            border-radius: 12px;
+            display: flex;
+            background: var(--white);
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+        .data-show-more.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+
+
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar close">
+        <div class="upper">
+            <i class="fas fa-bars icon toggle" aria-hidden="true" ></i>
+            <span class="text text-upper">DATASET</span>
+        </div>
+        <div class="menu">
+            <hr class="sidebar-divider">
+
+            <ul class="menu-links">
+                <li class="menu-link">
+                    <a href="#">
+                        <i class="fas fa-info icon"></i>
+                        <span class="text">INFO</span>
+                    </a>
+                </li>
+                <li class="menu-link">
+                    <a href="#">
+                        <i class="fas fa-folder-open-o icon"></i>
+                        <span class="text">FLITER</span>
+                    </a>
+                </li>
+                <li class="menu-link">
+                    <a href="#">
+                        <i class="iconfont fa-files-o icon"></i>
+                        <span class="text">CONTRAST</span>
+                    </a>
+                </li>
+            </ul>
+
+            <hr class="sidebar-divider">
+        </div>
+        <div class="lower" href="#">
+            <i class="fas fa-sign-out icon icon-lower"></i>
+            <span class="text text-lower">BACK HOME</span>
+        </div>
+    </div>
+
+    <div class="content">
+            <div class="bubble-arrow"></div>
+
+
+
+
+            <div class="bubble">
+                <div class="bubble-content">
+                <div class="bubble-inner">
+
+                    <div class="minder">
+                        <div class="line"></div>
+                        <p>
+                            {{ data_values.count }} modifications are made to the simulation conditions across {{ data_types.count }} different aspects.
+                        </p>
+                    </div>
+
+                    <div class="data-types-scroller" id="typeScroll">
+                        {% for data_type in data_types %}
+                        <div class="data-type-card">
+                            <div class="data-type-name">{{ data_type.name }}</div>
+                            <div class="data-type-values">
+                                {% for data_value in data_type.values.all %}
+                                <div class="data-value">{{ data_value.value }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="minder">
+                        <div class="line"></div>
+                        <p>There are {{ data_items.count }} items in total. May be inaccessible due to size limitations.</p>
+                    </div>
+
+                    <div class="data-items">
+                        {% for item in data_items %}
+                        <div class="data-item">
+                            <div class="data-item-name">{{ item.name }}</div>
+                            <div class="data-item-tags">
+                                    {% for tag in item.tags.all %}
+                                        {% if tag.value != "No" %}
+                                            <span class="data-item-tag">{{ tag.value }}</span>
+                                        {% endif %}
+                                    {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+
+                </div>
+                </div>
+
+                <div class="bubble-content">
+                <div class="bubble-inner">
+
+                    <div class="minder">
+                        <div class="line"></div>
+                        <p>You can click to select simulation conditions.</p>
+                    </div>
+
+                    <div class="data-type-filter" id="typeFilter">
+                        {% for data_type in data_types %}
+                        <div class="data-type-boxes">
+                            <div class="data-type-wrapper">
+                                <div class="data-type-box" type-id="{{ data_type.id }}">{{ data_type.name }}</div>
+                                <div class="data-type-options">
+                                    <span class="option-arrow prev">❮</span>
+                                    <span class="option-value">{{ data_type.values.all.0.value|safe }}</span>
+                                    <span class="option-arrow next">❯</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="minder" id="data-yes">
+                        <div class="line"></div>
+                        <p>Results will be listed below.</p>
+                    </div>
+
+                    <div class="minder" id="data-no" style="display: none">
+                        <div class="line"></div>
+                        <p>There's no such data.</p>
+                    </div>
+
+                    <div class="data-item-results" id="fliter-result">
+                        {% for item in data_items %}
+                        <div class="data-item data-item-result" result-id="item-{{ item.id }}"
+                            {% for tag in item.tags.all %}data-type{{ tag.type.id }}="{{ tag.id }}" {% endfor %}>
+                            <div class="data-item-name item-name-result">{{ item.name }}</div>
+                            <div class="data-item-tags item-tags-result">
+                                {% for tag in item.tags.all %}
+                                    {% if tag.value != "No" %}
+                                        <span class="data-item-tag">{{ tag.value }}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+
+
+                </div>
+                </div>
+
+                <div class="bubble-content">
+                <div class="bubble-inner">
+
+                    <div class="minder">
+                        <div class="line"></div>
+                        <p>Select the simulation condition you wish to modify.</p>
+                    </div>
+
+                    <div class="data-type-selector data-type-filter" id="typeSelector">
+                        {% for data_type in data_types %}
+                        <div class="data-type-boxes">
+                            <div class="data-type-box contrast">{{ data_type.name }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="minder" id="data-yes">
+                        <div class="line"></div>
+                        <p>Comparison data will be listed below.</p>
+                    </div>
+
+                    <div class="minder" id="data-no" style="display: none">
+                        <div class="line"></div>
+                        <p>There's no such data.</p>
+                    </div>
+
+                    <div class="data-contrast-results" id="contrast-results">
+                        <div class="pagination-container">
+                            <div class="pagination-arrows">
+                                <div class="arrow prev" id="prev-arrow">
+                                    <i class="fa fa-chevron-left icon" aria-hidden="true"></i>
+                                </div>
+                            </div>
+
+                            <div class="contrast-pages" id="contrast-pages">
+                                <!-- groups -->
+                            </div>
+
+                            <div class="pagination-arrows">
+                                <div class="arrow next" id="next-arrow">
+                                    <i class="fa fa-chevron-right icon" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pagination-dots" id="pagination-dots">
+                            <!-- groups -->
+                        </div>
+
+                    </div>
+
+                </div>
+                </div>
+
+                <div class="data-show-more">
+                    <i class="btn-back fa fa-chevron-left icon" aria-hidden="true"></i>
+                </div>
+
+
+            </div>
+    </div>
+
+</body>
+
+
+
+
+
+<script src="../static/js/sidebar.js"></script>
+<script src="../static/js/scroll-horizontal.js"></script>
+
+<script>
+    const filterOptions = {};
+    const activeFilters = {};
+
+    {% for data_type in data_types %}
+    filterOptions[{{ data_type.id }}] = {
+        options: [
+            {% for value in data_type.values.all %}
+            {
+                id: {{ value.id }},
+                value: "{{ value.value }}"
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ],
+        currentIndex: 0
+    };
+    {% endfor %}
+</script>
+<script src="../static/js/data-fliter.js"></script>
+
+<script>
+    let DATASET = null;
+        DATASET = [
+            {% for item in data_items %}
+            {
+                id: "{{ item.id }}",
+                name: "{{ item.name }}",
+                attributes: [
+                    {% for tag in item.tags.all %}
+                    {
+                        type: "{{ tag.type.name }}",
+                        value: "{{ tag.value }}",
+                    },
+                    {% endfor %}
+                ]
+            },{% endfor %}
+        ]
+</script>
+<script src="../static/js/data-contrast.js"></script>
+
+<script>
+const dataItems = document.querySelector('#fliter-result').querySelectorAll('.data-item-result');
+const DataShowMore = document.querySelector('.data-show-more');
+const btnBack = document.querySelector('.btn-back');
+
+dataItems.forEach(item => {
+    item.addEventListener('click', e => {
+        e.stopPropagation();
+
+        const itemName = item.querySelector('.data-item-name').textContent;
+        const tagElements = item.querySelectorAll('.data-item-tag');
+        const tags = Array.from(tagElements).map(tag => tag.textContent).join(', ');
+
+        const contentHTML = `
+            <div style="width:100%; height:auto; overflow-y:auto;">
+                <iframe src="../static/plots/${itemName}.html" style="width:100%; border:none; height:500px;"></iframe>
+
+                <img src="../static/plots/${itemName}.png" alt="${itemName}" style="width:100%; height:auto;">
+            </div>
+        `;
+
+        DataShowMore.classList.add('active');
+    });
+});
+
+btnBack.addEventListener('click', () => {
+    DataShowMore.classList.remove('active');
+});
+DataShowMore.addEventListener('click', e => {
+    e.stopPropagation();
+});
+document.addEventListener('click', () => {
+    DataShowMore.classList.remove('active');
+});
+
+</script>
+
+</html>

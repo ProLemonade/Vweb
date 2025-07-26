@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report</title>
+    <link rel="stylesheet" href="../static/css/base-sidebar-content.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <style>
+
+        .waterfall-container {
+            column-count: 3;
+            column-gap: 20px;
+            padding-top:20px;
+            padding-bottom:10px;
+        }
+
+        .image-item {
+            break-inside: avoid;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .image-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .image-item img {
+            width: 100%;
+            display: block;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 900px) {
+            .waterfall-container {
+                column-count: 2;
+            }
+        }
+        @media (max-width: 600px) {
+            .waterfall-container {
+                column-count: 1;
+            }
+        }
+
+        .upload-container {
+            width: 100%;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .upload-box {
+            width: 100%;
+            height: 120px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            position: relative;
+            cursor: pointer;
+            transition: border-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box; /* 不加会莫名其妙溢出 */
+        }
+
+        .upload-box:hover {
+            border-color:var(--purple-light);
+            background: #f8f9fa;
+        }
+
+        .plus-horizontal, .plus-vertical {
+            position: absolute;
+            background: #666;
+            transition: all 0.3s;
+        }
+
+        .plus-horizontal {
+            width: 40px;
+            height: 4px;
+        }
+
+        .plus-vertical {
+            width: 4px;
+            height: 40px;
+        }
+
+        .file-input {
+            opacity: 0;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .upload-text {
+            color: #666;
+            font-size: 16px;
+            margin-top: 60px;
+        }
+
+        /* 上传后隐藏加号 */
+        .uploaded .plus-horizontal,
+        .uploaded .plus-vertical {
+            opacity: 0;
+        }
+        .uploaded .upload-text {
+            color: #666;
+            font-size: 16px;
+            display:flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 切换按钮样式 */
+        .toggle-switch {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 60px;
+            height: 30px;
+            background-color: #e0e0e0;
+            border-radius: 15px;
+            cursor: pointer;
+            z-index: 3;
+        }
+
+        .toggle-switch .slider {
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            left: 2px;
+            top: 2px;
+            background-color: white;
+            border-radius: 50%;
+            transition: 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active {
+            background-color: var(--purple-light);
+        }
+
+        .toggle-switch.active .slider {
+            transform: translateX(30px);
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .action-button {
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--purple-white);
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s, opacity 0.3s;
+            flex-grow: 1;
+            margin: 0 5px;
+        }
+
+        .action-button:first-child {
+            margin-left: 0;
+        }
+
+        .action-button:last-child {
+            margin-right: 0;
+        }
+
+        .action-button:hover {
+            background-color: var(--purple-light);
+        }
+
+        .action-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+
+
+        .full-width-image-container {
+            width: 100%;
+            overflow-x: auto; /* 如果图片超出宽度会出现滚动条 */
+        }
+
+        .full-width-image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            min-width: 100%; /* 确保窄图也占满宽 */
+        }
+
+
+
+
+    </style>
+
+
+</head>
+
+<body>
+
+    <div class="sidebar close">
+        <div class="upper">
+            <i class="fas fa-bars icon toggle" aria-hidden="true" ></i>
+            <span class="text text-upper">REPORT</span>
+        </div>
+        <div class="menu">
+            <hr class="sidebar-divider">
+
+            <ul class="menu-links">
+                <li class="menu-link">
+                    <a href="#">
+                        <i class="fas fa-film icon"></i>
+                        <span class="text">SIMPLE</span>
+                    </a>
+                </li>
+                <li class="menu-link">
+                    <a href="#">
+                        <i class="fas fa-newspaper-o icon"></i>
+                        <span class="text">MYCASE</span>
+                    </a>
+                </li>
+            </ul>
+
+            <hr class="sidebar-divider">
+        </div>
+        <div class="lower" href="#">
+            <i class="fas fa-sign-out icon icon-lower"></i>
+            <span class="text text-lower">BACK HOME</span>
+        </div>
+    </div>
+
+    <div class="content">
+            <div class="bubble-arrow"></div>
+
+
+
+
+            <div class="bubble">
+
+                <div class="bubble-content">
+                <div class="bubble-inner">
+
+                    <div class="minder">
+                        <div class="line"></div>
+                        <p>Effects from each dynamical process will be shown below.</p>
+                    </div>
+
+                    <div class="waterfall-container">
+                        {% for image in images %}
+                        <div class="image-item">
+                            <img src="{% static image.url %}" alt="{{ image.name }}">
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="backToTop">
+                        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+                    </div>
+                </div>
+                </div>
+
+                <div class="bubble-content">
+                <div class="bubble-inner">
+                    <div class="upload-container">
+                        <div class="toggle-switch" id="toggleSwitch">
+                            <div class="slider"></div>
+                        </div>
+
+                        <div class="upload-box">
+                            <div class="plus-horizontal"></div>
+                            <div class="plus-vertical"></div>
+                            <input type="file" id="fileInput" class="file-input" accept=".csv,.txt">
+                            <span class="upload-text">Click to upload file</span>
+                        </div>
+
+                        <div class="button-container">
+                            <button class="action-button" id="processFileBtn" disabled>Process File</button>
+                            <button class="action-button" id="processFolderBtn" disabled>Process Folder</button>
+                        </div>
+                    </div>
+                </div>
+                </div>
+
+
+
+
+            </div>
+    </div>
+
+</body>
+
+
+
+
+
+<script src="../static/js/sidebar.js"></script>
+
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const toggleSwitch = document.getElementById('toggleSwitch');
+    const processFileBtn = document.getElementById('processFileBtn');
+    const processFolderBtn = document.getElementById('processFolderBtn');
+    const uploadBox = document.querySelector('.upload-box');
+    const uploadText = document.querySelector('.upload-text');
+
+    // 当前模式状态（默认为文件模式）
+    let isFileMode = true;
+
+    // 切换按钮点击事件
+    toggleSwitch.addEventListener('click', function() {
+        this.classList.toggle('active');
+        isFileMode = !this.classList.contains('active');
+
+        // 重置上传框状态
+        uploadBox.classList.remove('uploaded');
+        uploadText.textContent = isFileMode ? "Click to upload file" : "Click to upload folder";
+        fileInput.value = '';
+
+        // 更新文件选择器属性
+        if (isFileMode) {
+            fileInput.removeAttribute('webkitdirectory');
+            fileInput.removeAttribute('directory');
+            fileInput.setAttribute('accept', '.csv,.txt');
+        } else {
+            fileInput.setAttribute('webkitdirectory', '');
+            fileInput.setAttribute('directory', '');
+            fileInput.removeAttribute('accept');
+        }
+
+        // 重置按钮状态
+        processFileBtn.disabled = true;
+        processFolderBtn.disabled = true;
+    });
+
+    // 文件选择事件
+    fileInput.addEventListener('change', function(e) {
+        const files = e.target.files;
+
+        if (files.length > 0) {
+            // 添加上传后样式
+            uploadBox.classList.add('uploaded');
+
+            if (isFileMode) {
+                // 文件模式
+                uploadText.textContent = files[0].name;
+                processFileBtn.disabled = false;
+                processFolderBtn.disabled = true;
+            } else {
+                // 文件夹模式
+                uploadText.textContent = `${files.length} files selected`;
+                processFileBtn.disabled = true;
+                processFolderBtn.disabled = false;
+            }
+        }
+    });
+
+    // 拖拽上传支持
+    uploadBox.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadBox.style.borderColor = '#2196F3';
+    });
+
+    uploadBox.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        uploadBox.style.borderColor = '#ccc';
+    });
+
+    uploadBox.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const files = e.dataTransfer.files;
+        fileInput.files = files;
+        // 触发change事件
+        const event = new Event('change');
+        fileInput.dispatchEvent(event);
+    });
+
+    // 处理文件按钮点击事件
+    processFileBtn.addEventListener('click', function() {
+        console.log('Processing file...');
+        // 这里添加处理文件的逻辑
+    });
+
+    // 处理文件夹按钮点击事件
+    processFolderBtn.addEventListener('click', function() {
+        console.log('Processing folder...');
+        // 这里添加处理文件夹的逻辑
+    });
+</script>
+
+</html>

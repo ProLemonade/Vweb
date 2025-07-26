@@ -1,0 +1,181 @@
+### SIMU
+
+# Boundary Conditions
+u_bcs = FieldBoundaryConditions(top=FluxBoundaryCondition(Qᵘ),bottom = drag_bc_u)
+v_bcs = FieldBoundaryConditions(bottom = drag_bc_v)
+
+T_bcs = FieldBoundaryConditions(top=FluxBoundaryCondition(Qᵀ),bottom=FluxBoundaryCondition(0.0))
+S_bcs = FieldBoundaryConditions(top=FluxBoundaryCondition(0.0),bottom=FluxBoundaryCondition(0.0))
+
+# Model Setup
+model = NonhydrostaticModel(; grid, coriolis,
+                            advection = WENO(),
+                            timestepper = :RungeKutta3,
+                            tracers =(:T,:S),
+                            buoyancy = SeawaterBuoyancy(),
+                            closure = AnisotropicMinimumDissipation(),
+                            stokes_drift = UniformStokesDrift(∂z_uˢ=∂z_uˢ),
+                            boundary_conditions = (u=u_bcs,v=v_bcs,T=T_bcs,S=S_bcs),
+                            forcing=(u=Fx,v=Fy))
+
+set!(model, u=uᵢ,v=vᵢ,w=wᵢ,T=Tᵢ,S=Sᵢ)
+simulation = Simulation(model, Δt=0.4, stop_time=144hours)
+
+# Information Print
+wizard = TimeStepWizard(cfl=0.8, max_change=1.1, max_Δt=0.1minute)
+simulation.callbacks[:wizard] = Callback(wizard, IterationInterval(10))
+using Printf
+function progress(simulation)
+    u, v, w = simulation.model.velocities
+
+    msg = @sprintf("i: %04d, t: %s, Δt: %s, umax = (%.5e, %.5e, %.5e) ms⁻¹, wall time: %s\n",
+                   iteration(simulation),
+                   prettytime(time(simulation)),
+                   prettytime(simulation.Δt),
+                   maximum(abs, u), maximum(abs, v), maximum(abs, w),
+                   prettytime(simulation.run_wall_time))
+
+    @info msg
+    return nothing
+end
+simulation.callbacks[:progress] = Callback(progress, IterationInterval(50))
+
+
+### OutPut
+# Checkpoint File
+simulation.output_writers[:checkpointer] = Checkpointer(model, schedule=TimeInterval(6hours), prefix="model_checkpoint",overwrite_existing = true)
+
+# Interval Time
+output_interval = 2minutes
+
+# Basic model field
+u=model.velocities.u
+v=model.velocities.v
+w=model.velocities.w
+p=model.pressures.pNHS+model.pressures.pHY′
+T=model.tracers.T
+S=model.tracers.S
+νₑ=model.diffusivity_fields.νₑ
+κₑT=model.diffusivity_fields.κₑ.T
+
+simulation.output_writers[:fields] = NetCDFOutputWriter(model, merge(model.velocities,  (; p, T, νₑ, κₑT)),
+                                                        filename = "D:/field.nc",
+                                                        schedule = TimeInterval(output_interval),
+                                                        overwrite_existing = true)
+
+# Basic averaged field
+U = Field(Average(u, dims=(1, 2)))
+V = Field(Average(v, dims=(1, 2)))
+W = Field(Average(w,dims=(1,2)))
+P = Field(Average(p,dims=(1,2)))
+Tₐ = Field(Average(T, dims=(1, 2)))
+
+
+simulation.output_writers[:averages] =
+    NetCDFOutputWriter(model, (U=U, V=V, W=W, Tₐ=Tₐ, P=P),
+                     schedule =AveragedTimeInterval(output_interval,window=1.5minutes),
+                     filename ="D:/Average.nc",
+                     overwrite_existing = true)
+
+# High order value
+
+u²= @at (Center,Center,Face) Field(u^2)
+v²= @at (Center,Center,Face) Field(v^2)
+w²= @at (Center,Center,Face) Field(w^2)
+uw = @at (Center,Center,Face) Field(u*w)
+vw = @at (Center,Center,Face) Field(v*w)
+uv = @at (Center,Center,Face) Field(u*v)
+pw = @at (Center,Center,Face) Field(p*w)
+Tw = @at (Center,Center,Face) Field(T*w)
+
+uuw = @at (Center,Center,Face) Field(u*u*w)
+vvw = @at (Center,Center,Face) Field(v*v*w)
+www = @at (Center,Center,Face) Field(w*w*w)
+
+S₁₁_op=@at (Center,Center,Face) ∂x(u)
+S₂₂_op=@at (Center,Center,Face) ∂y(v)
+S₃₃_op=@at (Center,Center,Face) ∂z(w)
+S₁₂_op=@at (Center,Center,Face) ∂y(u)+∂x(v)
+S₁₃_op=@at (Center,Center,Face) ∂z(u)+∂x(w)
+S₂₃_op=@at (Center,Center,Face) ∂y(w)+∂z(v)
+
+τ₁₁=@at (Center,Center,Face) Field(νₑ*S₁₁_op)
+τ₂₂=@at (Center,Center,Face) Field(νₑ*S₂₂_op)
+τ₃₃=@at (Center,Center,Face) Field(νₑ*S₃₃_op)
+τ₁₂=@at (Center,Center,Face) Field(νₑ*S₁₂_op)
+τ₁₃=@at (Center,Center,Face) Field(νₑ*S₁₃_op)
+τ₂₃=@at (Center,Center,Face) Field(νₑ*S₂₃_op)
+
+uτ11= @at (Center,Center,Face) Field(u*τ₁₁)
+uτ12= @at (Center,Center,Face) Field(u*τ₁₂)
+uτ13= @at (Center,Center,Face) Field(u*τ₁₃)
+vτ12= @at (Center,Center,Face) Field(v*τ₁₂)
+vτ22= @at (Center,Center,Face) Field(v*τ₂₂)
+vτ23= @at (Center,Center,Face) Field(v*τ₂₃)
+wτ13= @at (Center,Center,Face) Field(w*τ₁₃)
+wτ23= @at (Center,Center,Face) Field(w*τ₂₃)
+wτ33= @at (Center,Center,Face) Field(w*τ₃₃)
+
+u²A= Average(u²,dims=(1,2))
+v²A= Average(v²,dims=(1,2))
+w²A= Average(w²,dims=(1,2))
+uwA = Average(uw,dims=(1,2))
+vwA = Average(vw,dims=(1,2))
+uvA = Average(uv,dims=(1,2))
+pwA = Average(pw,dims=(1,2))
+TwA = Average(Tw,dims=(1,2))
+
+uuwA = Average(uuw,dims=(1,2))
+vvwA = Average(vvw,dims=(1,2))
+wwwA = Average(www,dims=(1,2))
+
+S₁₁_opA=Average(S₁₁_op,dims=(1,2))
+S₂₂_opA=Average(S₂₂_op,dims=(1,2))
+S₃₃_opA=Average(S₃₃_op,dims=(1,2))
+S₁₂_opA=Average(S₁₂_op,dims=(1,2))
+S₁₃_opA=Average(S₁₃_op,dims=(1,2))
+S₂₃_opA=Average(S₂₃_op,dims=(1,2))
+
+τ₁₁A=Field(Average(τ₁₁,dims=(1,2)))
+τ₂₂A=Field(Average(τ₂₂,dims=(1,2)))
+τ₃₃A=Field(Average(τ₃₃,dims=(1,2)))
+τ₁₂A=Field(Average(τ₁₂,dims=(1,2)))
+τ₁₃A=Field(Average(τ₁₃,dims=(1,2)))
+τ₂₃A=Field(Average(τ₂₃,dims=(1,2)))
+
+uτ11A= Average(uτ11,dims=(1,2))
+uτ12A= Average(uτ12,dims=(1,2))
+uτ13A= Average(uτ13,dims=(1,2))
+vτ12A= Average(vτ12,dims=(1,2))
+vτ22A= Average(vτ22,dims=(1,2))
+vτ23A= Average(vτ23,dims=(1,2))
+wτ13A= Average(wτ13,dims=(1,2))
+wτ23A= Average(wτ23,dims=(1,2))
+wτ33A= Average(wτ33,dims=(1,2))
+
+
+simulation.output_writers[:two_order_quantity_A] =
+    NetCDFOutputWriter(model, (;u²A=u²A,v²A=v²A,w²A=w²A,uwA=uwA,vwA=vwA,uvA=uvA,pwA=pwA,TwA=TwA,uτ13A=uτ13A,vτ23A=vτ23A,wτ33A=wτ33A),
+                     schedule =AveragedTimeInterval(output_interval,window=1.5minutes),
+                     filename ="D:/twoOrder_A.nc",
+                     overwrite_existing = true)
+
+simulation.output_writers[:three_order_quantity_A] =
+    NetCDFOutputWriter(model, (;uuwA=uuwA,vvwA=vvwA,wwwA=wwwA),
+                     schedule =AveragedTimeInterval(output_interval,window=1.5minutes),
+                     filename ="D:/threeOrder_A.nc",
+                     overwrite_existing = true)
+
+
+simulation.output_writers[:one_order_quantity_tau_A] =
+    NetCDFOutputWriter(model, (;τ₁₁A=τ₁₁A,τ₁₂A=τ₁₂A,τ₁₃A=τ₁₃A,τ₂₂A=τ₂₂A,τ₂₃A=τ₂₃A,τ₃₃A=τ₃₃A),
+                     schedule =AveragedTimeInterval(output_interval,window=1.5minutes),
+                     filename ="D:/oneOrder_tau_A.nc",
+                     overwrite_existing = true)
+
+simulation.output_writers[:one_order_quantity_strain_rate_A] =
+    NetCDFOutputWriter(model, (;S₁₁_opA=S₁₁_opA,S₁₂_opA=S₁₂_opA,S₁₃_opA=S₁₃_opA,S₂₂_opA=S₂₂_opA,S₂₃_opA=S₂₃_opA,S₃₃_opA=S₃₃_opA),
+                     schedule =AveragedTimeInterval(output_interval,window=1.5minutes),
+                     filename ="D:/oneOrder_strainRate_A.nc",
+                     overwrite_existing = true)
+

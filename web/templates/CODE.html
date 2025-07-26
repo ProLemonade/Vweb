@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CODES</title>
+
+    <!-- CodeMirror 代码高亮显示-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/julia/julia.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/octave/octave.min.js"></script>
+    <!-- KaTeX 公式渲染-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="../static/css/base-sidebar-content.css">
+    <link rel="stylesheet" href="../static/css/code-pac-grid.css">
+    <link rel="stylesheet" href="../static/css/code-imgmore.css">
+    <link rel="stylesheet" href="../static/css/code-simu.css">
+
+</head>
+
+<body>
+
+    <div class="sidebar close">
+        <div class="upper">
+            <i class="fas fa-bars icon toggle" aria-hidden="true" ></i>
+            <span class="text text-upper">CODE</span>
+        </div>
+        <div class="menu">
+            <hr class="sidebar-divider">
+
+            <ul class="menu-links">
+                <li class="menu-link">
+                    <a href="#">
+                        <i class="fas fa-hourglass-end icon"></i>
+                        <span class="text">SIMULATION</span>
+                    </a>
+                </li>
+                <li class="menu-link">
+                    <a href="#">
+                        <i class="fas fa-file-image-o icon"></i>
+                        <span class="text">VISUALIZATION</span>
+                    </a>
+                </li>
+                <li class="menu-link">
+                    <a href="#">
+                        <i class="iconfont fa-wrench icon"></i>
+                        <span class="text">USEFUL TOOLS</span>
+                    </a>
+                </li>
+            </ul>
+
+            <hr class="sidebar-divider">
+        </div>
+        <div class="lower">
+            <i class="fas fa-sign-out icon icon-lower"></i>
+            <span class="text text-lower">BACK HOME</span>
+        </div>
+    </div>
+
+    <div class="content">
+            <div class="bubble-arrow"></div>
+
+            <div class="bubble">
+
+                <div class="bubble-content">
+                <div class="bubble-inner">
+
+                    <div class="header-container">
+                        <div class="pacman-box">
+                            <div class="pacman" id="pac-button">
+                                <div class="pacman-eye"></div>
+                            </div>
+                            <div class="peas">
+                                <div class="pea" simu-step="Conditions"></div>
+                                <div class="pea" simu-step="Simulation"></div>
+                                <div class="pea" simu-step="OutPut"></div>
+                            </div>
+                            <div class="pea-label"></div>
+                        </div>
+                    </div>
+
+                    <div class="simu-content" id="pic">
+                        <div class="carousel-container">
+                            <div class="carousel-slides">
+                                <img src="../static/img/Show2.png" class="slide active">
+                                <img src="../static/img/Show1.png" class="slide">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="simu-content" id="Conditions">
+
+                        <div class="process-boxes">
+                            {% for process in processes %}
+                                <div class="process-box">
+                                    {{ process.name }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="process-details">
+                            <div class="process-code">
+                                <div id="phase-editor"></div>
+                                <div class="phase-copy" onclick="copyPhase()">
+                                    <i class="fa fa-clipboard code-phase-icon" aria-hidden="true"></i>
+                                </div>
+                            </div>
+
+                            <div class="process-explanation">
+                                <div class="process-section">
+                                    <div class="process-formula">
+                                    </div>
+
+                                    <div class="process-varibles">
+                                        <table class="process-variables-table">
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="process-application" style="white-space: pre-wrap;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="simu-content" id="Simulation">
+                        {% with section=simu_sections.0 %}
+                        {% if section %}
+                        <div class="simu-details">
+                            {% for phase in section.phases %}
+                            <div class="simu-code-tip">{{ phase.tip }}</div>
+                            <div class="set-code">
+                                <div class="set-editor">{{ phase.code }}</div>
+                                <div class="phase-copy" onclick="copyPhaseContent(this)">
+                                    <i class="fa fa-clipboard code-phase-icon" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+
+                    <div class="simu-content" id="OutPut">
+                        {% with section=simu_sections.1 %}
+                        {% if section %}
+                        <div class="simu-details">
+                            {% for phase in section.phases %}
+                            <div class="simu-code-tip">{{ phase.tip }}</div>
+                            <div class="set-code">
+                                <div class="set-editor">{{ phase.code }}</div>
+                                <div class="phase-copy" onclick="copyPhaseContent(this)">
+                                    <i class="fa fa-clipboard code-phase-icon" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+
+                    <div class="backToTop">
+                        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+                    </div>
+                </div>
+                </div>
+
+                <div class="bubble-content">
+                <div class="bubble-inner">
+
+                    <div class="header-container">
+                        <div class="pacman-box">
+                            <div class="pacman" id="pacman-button">
+                                <div class="pacman-eye"></div>
+                            </div>
+                            <div class="beans">
+                                <div class="bean" data-type="PYTHON"></div>
+                                <div class="bean" data-type="JULIA"></div>
+                                <div class="bean" data-type="MATLAB"></div>
+                            </div>
+                            <div class="bean-label"></div>
+                        </div>
+
+                        <div class="search-box">
+                            <input class="search-input" type="text" placeholder="Search..." />
+                            <button class="search-button">
+                                <i class="iconfont fa-search search-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid-container">
+                        {% for file in files %}
+                        <div class="img-box">
+                            <img src="./static/img/{{ file.name }}.png"
+                                data-type="{{ file.language|upper }}">
+                            <div class="img-caption">{{ file.name }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="backToTop">
+                        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+                    </div>
+
+                </div>
+                </div>
+
+                <div class="bubble-content">
+
+                    <div class="header-container">
+                        <div class="pacman-box">
+                            <div class="pacman" id="pacman-button">
+                                <div class="pacman-eye"></div>
+                            </div>
+                            <div class="beans">
+                                <div class="bean"></div>
+                                <div class="bean"></div>
+                                <div class="bean"></div>
+                            </div>
+                            <div class="bean-label"></div>
+                        </div>
+
+                        <div class="search-box">
+                            <input class="search-input" type="text" placeholder="Search..." />
+                            <button class="search-button">
+                                <i class="iconfont fa-search search-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="tool-content">
+                        {% with section=tool_sections.0%}
+                        {% if section %}
+                        <div class="simu-details">
+                            {% for phase in section.phases %}
+                            <div class="simu-code-tip">{{ phase.tip }}</div>
+                            <div class="set-code">
+                                <div class="set-editor">{{ phase.code }}</div>
+                                <div class="phase-copy" onclick="copyPhaseContent(this)">
+                                    <i class="fa fa-clipboard code-phase-icon" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+
+                </div>
+
+                <div class="img-box-more">
+                    <div class="code-header">
+                        <div class="code-header-left">
+                            <i class="btn-back fa fa-chevron-left icon" aria-hidden="true"></i>
+                            <div class="code-text" id="lan"></div>
+                            <div class="code-copy" onclick="copyCode()">
+                                <i class="fa fa-clone icon" aria-hidden="true"></i>
+                                <div class="code-text"></div>
+                            </div>
+                            <div class="code-run" onclick="runCode()">
+                                <i class="fa fa-play icon" aria-hidden="true"></i>
+                                <div class="code-text">Run</div>
+                            </div>
+                        </div>
+                        <div class="code-header-right">
+                            <div class="code-text" id="tags"></div>
+                        </div>
+                    </div>
+                    <div class="img-box-content">
+                        <div class="code-area">
+                            <div id="code-editor"></div>
+                        </div>
+                        <div class="output-area">
+                            <div id="code-result">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+    </div>
+
+</body>
+
+<script>window.codeFiles = {{ files|safe }};</script>
+
+<script src="../static/js/sidebar.js"></script>
+<script src="../static/js/code-pacman.js"></script>
+<script src="../static/js/code-editor.js"></script>
+<script src="../static/js/code-switchpic.js"></script>
+
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    const processBoxes = document.querySelectorAll('.process-box');
+    const processDetails = document.querySelector('.process-details');
+    const processExplanation = document.querySelector('.process-explanation');
+    const processApplication = document.querySelector('.process-application');
+    const phaseEditor = document.getElementById('phase-editor');
+
+
+    window.phEditor = CodeMirror(function(elt) {
+        phaseEditor.parentNode.replaceChild(elt, phaseEditor);
+        }, {
+        value: "",
+        mode: "julia",
+        lineNumbers: true,
+        readOnly: true,
+        viewportMargin: Infinity
+        })
+
+    processBoxes.forEach(box => {
+        box.addEventListener('click', function() {
+
+            const processChosen = this.textContent.trim();
+
+            processBoxes.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            processDetails.style.display = 'block';
+
+            // 死磕数据传递方式 最后用了最诡异的方法 滚啊啊啊啊啊
+            let processData = null;
+            {% for process in processes %}
+            if ("{{ process.name }}" === processChosen) {
+                processData = {
+                    name: "{{ process.name }}",
+                    code: `{{ process.process_code|escapejs }}`,
+                    application: `{{ process.process_application|escapejs }}`,
+                    formulas: [
+                        {% for formula in process.formulas.all %}
+                        {
+                            formula_text: `{{ formula.formula_text|escapejs }}`,
+                            variables: [
+                                {% for var in formula.variables.all %}
+                                {
+                                    variable_name: `{{ var.variable_name|escapejs }}`,
+                                    variable_unit: `{{ var.variable_unit|escapejs }}`,
+                                    variable_mean_en: `{{ var.variable_mean_en|escapejs }}`,
+                                    variable_mean_zh: `{{ var.variable_mean_zh|escapejs }}`
+                                }{% if not forloop.last %},{% endif %}
+                                {% endfor %}
+                            ]
+                        }{% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                    ]
+                };
+            }
+            {% endfor %}
+
+            if (processData) {
+
+                if (phEditor) {
+                    phEditor.setValue(processData.code);
+                    phEditor.refresh();
+                } else {
+                    phaseEditor.innerHTML = `<pre><code>${processData.code}</code></pre>`;
+                }
+
+                processExplanation.innerHTML = '';
+                processData.formulas.forEach(formula => {
+                    processExplanation.appendChild(createFormulaSection(formula));
+                });
+                renderMath();
+
+                processApplication.innerHTML = processData.application;
+
+                processDetails.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+
+    const editors = document.querySelectorAll('.set-editor');
+
+    editors.forEach(editorElement => {
+        const codeValue = editorElement.textContent.trim();
+        const codeContainer = document.createElement('div');
+
+        editorElement.parentNode.insertBefore(codeContainer, editorElement);
+        editorElement.remove();
+
+        const setEditor = CodeMirror(codeContainer, {
+            value: codeValue,
+            mode: "julia",
+            lineNumbers: true,
+            readOnly: true,
+            viewportMargin: Infinity
+        });
+
+        setEditor.refresh();
+
+        window.dispatchEvent(new Event('resize'));
+    });
+
+
+
+});
+
+function renderMath() {
+    const equations = document.getElementsByClassName('katex-equation');
+
+    Array.from(equations).forEach((element, index) => {
+        try {
+            katex.render(element.textContent, element, {
+                throwOnError: false,
+                displayMode: true,
+                strict: false,
+                fleqn: true,
+                output: 'html'
+            });
+        } catch (e) {
+            console.error(e);
+        }
+    });
+}
+
+function createFormulaSection(formula) {
+    const section = document.createElement('div');
+    section.className = 'process-section';
+
+    const formulaDiv = document.createElement('div');
+    formulaDiv.className = 'process-formula katex-equation';
+    formulaDiv.textContent = formula.formula_text;
+
+    const variablesDiv = document.createElement('div');
+    variablesDiv.className = 'process-varibles';
+    const table = document.createElement('table');
+    table.className = 'process-variables-table';
+    const tbody = document.createElement('tbody');
+
+    if (formula.variables && formula.variables.length > 0) {
+        // 遍历 每个varible一行
+        tbody.innerHTML = formula.variables.map(variable => `
+            <tr>
+                <td>${variable.variable_name}</td>
+                <td>${variable.variable_unit}</td>
+                <td>${variable.variable_mean_en}</td>
+                <td>${variable.variable_mean_zh}</td>
+            </tr>
+        `).join('');
+    }
+
+    table.appendChild(tbody);
+    variablesDiv.appendChild(table);
+    section.appendChild(formulaDiv);
+    section.appendChild(variablesDiv);
+
+    return section;
+}
+
+function copyPhaseContent(copyButton) {
+    const setCode = copyButton.closest('.set-code');
+    if (!setCode) return;
+
+    const editor = setCode.querySelector('.CodeMirror');
+    if (!editor || !editor.CodeMirror) return;
+
+    const content = editor.CodeMirror.getValue();
+    navigator.clipboard.writeText(content).then(() => {
+        console.log('Copied!');
+    }).catch(err => {
+        console.error(err);
+    });
+}
+
+</script>
+
+
+</html>

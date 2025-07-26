@@ -1,0 +1,231 @@
+### 数据
+
+# 数据信息
+from netCDF4 import Dataset
+fn = r"field.nc"
+ncid = Dataset(fn)
+ncid.variables
+
+# 数据读取
+from netCDF4 import Dataset
+fn = r"field.nc"
+ncid = Dataset(fn)
+x = ncid.variables['xC'][:]
+y = ncid.variables['yC'][:]
+z = ncid.variables['zC'][::-1]
+Nx, Ny, Nz = x.shape[0], y.shape[0], z.shape[0]
+Lx, Ly, Lz = np.max(np.abs(x)),np.max(np.abs(y)),np.max(np.abs(z))
+print(Nx, Ny, Nz, Lx, Ly, Lz)
+u = ncid.variables['u'][:, ::-1, :, :]
+v = ncid.variables['v'][:, ::-1, :, :]
+w = ncid.variables['w'][:, ::-1, :, :][:,:Nz,:,:]
+time = ncid.variables['time'][:]
+ncid.close()
+
+fn = r"Average.nc"
+ncid = Dataset(fn)
+ncid.variables
+U = ncid.variables['U'][:,::-1][:,:Nz]
+V = ncid.variables['V'][:,::-1][:,:Nz]
+W = ncid.variables['W'][:,::-1][:,:Nz]
+P = ncid.variables['P'][:,::-1][:,:Nz]
+Tₐ = ncid.variables['Tₐ'][:,::-1][:,:Nz]
+ncid.close()
+
+fn = r"twoOrder_A.nc"
+ncid = Dataset(fn)
+ncid.variables
+uuA = ncid.variables['u²A'][:,::-1][:,:Nz]
+vvA = ncid.variables['v²A'][:,::-1][:,:Nz]
+wwA = ncid.variables['w²A'][:,::-1][:,:Nz]
+uwA = ncid.variables['uwA'][:,::-1][:,:Nz]
+vwA = ncid.variables['vwA'][:,::-1][:,:Nz]
+uvA = ncid.variables['uvA'][:,::-1][:,:Nz]
+pwA = ncid.variables['pwA'][:,::-1][:,:Nz]
+TwA = ncid.variables['TwA'][:,::-1][:,:Nz]
+uτ13A = ncid.variables['uτ13A'][:,::-1][:,:Nz]
+vτ23A = ncid.variables['vτ23A'][:,::-1][:,:Nz]
+wτ33A = ncid.variables['wτ33A'][:,::-1][:,:Nz]
+ncid.close()
+
+fn = r"threeOrder_A.nc"
+ncid = Dataset(fn)
+uuwA = ncid.variables['uuwA'][:,::-1][:,:Nz]
+vvwA = ncid.variables['vvwA'][:,::-1][:,:Nz]
+wwwA = ncid.variables['wwwA'][:,::-1][:,:Nz]
+ncid.close()
+
+fn = r"threeOrder_A.nc"
+ncid = Dataset(fn)
+uuwA = ncid.variables['uuwA'][:,::-1][:,:Nz]
+vvwA = ncid.variables['vvwA'][:,::-1][:,:Nz]
+wwwA = ncid.variables['wwwA'][:,::-1][:,:Nz]
+ncid.close()
+
+fn = r"oneOrder_tau_A.nc"
+ncid = Dataset(fn)
+τ11A = ncid.variables['τ₁₁A'][:,::-1][:,:Nz]
+τ12A = ncid.variables['τ₁₂A'][:,::-1][:,:Nz]
+τ13A = ncid.variables['τ₁₃A'][:,::-1][:,:Nz]
+τ22A = ncid.variables['τ₂₂A'][:,::-1][:,:Nz]
+τ23A = ncid.variables['τ₂₃A'][:,::-1][:,:Nz]
+τ33A = ncid.variables['τ₃₃A'][:,::-1][:,:Nz]
+ncid.close()
+
+fn = r"oneOrder_strainRate_A.nc"
+ncid = Dataset(fn)
+S11_opA = ncid.variables['S₁₁_opA'][:,::-1][:,:Nz]
+S12_opA = ncid.variables['S₁₂_opA'][:,::-1][:,:Nz]
+S13_opA = ncid.variables['S₁₃_opA'][:,::-1][:,:Nz]
+S22_opA = ncid.variables['S₂₂_opA'][:,::-1][:,:Nz]
+S23_opA = ncid.variables['S₂₃_opA'][:,::-1][:,:Nz]
+S33_opA = ncid.variables['S₃₃_opA'][:,::-1][:,:Nz]
+ncid.close()
+
+# 寻找切片数据(三维数据,切片方向,可切范围,切片位置,位置误差)
+def cut(volumn,derection,locations,location,near): 
+    i=1
+    for l in locations:
+        if abs(l-location)<near:
+            number=i
+            break
+        i=i+1
+    if derection=='z':
+        data=volumn[number, :, :]
+    elif derection=='x':
+        data=volumn[:, number, :]
+    elif  derection=='y':
+        data=volumn[:, :, number]
+    return data
+
+
+# 从流速场算存读TKE
+from netCDF4 import Dataset
+fn = r"field.nc"  
+ncid = Dataset(fn)
+time = ncid.variables['time'][:]
+z = ncid.variables['zC'][:]
+Nt = time.shape[0]
+Nz = z.shape
+
+import numpy as np
+TKE_a_all = None
+for i in range(Nt):
+    ui = ncid.variables['u'][i, ::-1, :, :]
+    vi = ncid.variables['v'][i, ::-1, :, :]
+    wi = ncid.variables['w'][i, ::-1, :, :][:Nz, :, :]
+    Ui = np.mean(ui, axis=(1, 2), keepdims=True)
+    Vi = np.mean(vi, axis=(1, 2), keepdims=True)
+    Wi = np.mean(wi, axis=(1, 2), keepdims=True)
+    u_p = ui - Ui
+    v_p = vi - Vi
+    w_p = wi - Wi
+    TKE_i = 0.5 * (u_p**2 + v_p**2 + w_p**2)
+    TKE_a = np.mean(TKE_i, axis=(1, 2), keepdims=True)
+    if TKE_a_all is None:
+        TKE_a_all = TKE_a[np.newaxis, :]
+    else:
+        TKE_a_all = np.vstack((TKE_a_all, TKE_a[np.newaxis, :]))
+    print(TKE_a_all.shape)
+
+import os
+file_path = "TKE.nc"
+
+if os.path.exists(file_path):
+    nc = Dataset(file_path, 'r+')
+else:
+    nc = Dataset(file_path, 'w')
+
+if 'time' not in nc.dimensions:
+    nc.createDimension('time', None)
+if 'zC' not in nc.dimensions:
+    nc.createDimension('zC', 100) 
+if 'xC' not in nc.dimensions:
+    nc.createDimension('xC', 1)
+if 'yC' not in nc.dimensions:
+        nc.createDimension('yC', 1)
+if 'TKE' not in nc.variables:
+    tke_var = nc.createVariable('TKE', 'f4', ('time', 'zC', 'xC', 'yC'))
+    tke_var.units = 'J/kg'
+    tke_var.description = 'Turbulent Kinetic Energy'
+nc.variables['TKE'][:, :, :, :] = TKE_a_all
+nc.close()
+
+fn = r"TKE.nc"  
+nci = Dataset(fn) # nci.variables
+TKE = nci.variables['TKE'][:]
+
+# 从高阶数据算TKE
+fn = r"twoOrder_A.nc"
+ncid = Dataset(fn)
+u2 = ncid.variables['u²A'][:,::-1]
+v2 = ncid.variables['v²A'][:,::-1]
+w2 = ncid.variables['w²A'][:,::-1]
+ncid.close()
+
+TKE = 0.5 * (u2 + v2 + w2)
+
+# 计算式数 通量
+U = np.mean(u, axis=(2, 3))
+V = np.mean(v, axis=(2, 3))
+uw = (u - U[:, :, np.newaxis, np.newaxis]) * w
+vw = (v - V[:, :, np.newaxis, np.newaxis]) * w
+
+# 计算式 梯度
+du_dx = np.gradient(u, x, axis=2)  # ∂u/∂x
+dv_dy = np.gradient(v, y, axis=3)  # ∂v/∂y
+
+du_dz = np.gradient(u, z, axis=1)  # ∂u/∂z
+dv_dz = np.gradient(v, z, axis=1)  # ∂v/∂z
+dw_dz = np.gradient(w, z, axis=1)  # ∂w/∂z
+
+dT_dz = np.gradient(T, z, axis=1)  # ∂T/∂z
+
+# 计算式 张量
+S_11 = du_dx
+S_22 = dv_dy
+S_33 = dw_dz
+S_12 = du_dy + dv_dx
+S_13 = du_dz + dw_dx
+S_23 = dv_dz + dw_dy
+S_11_A = average(S_11, dims=(2, 3))
+S_22_A = average(S_22, dims=(2, 3))
+S_33_A = average(S_33, dims=(2, 3))
+S_12_A = average(S_12, dims=(2, 3))
+S_13_A = average(S_13, dims=(2, 3))
+S_23_A = average(S_23, dims=(2, 3))
+
+# 计算式 应力
+τ_uw = νₑ * (du_dz + dw_dx)
+τ_vw = νₑ * (dv_dz + dw_dy)
+τ_ww = νₑ * (dw_dz + dw_dz)
+
+τ_11 = νₑ * S_11
+τ_22 = νₑ * S_22
+τ_33 = νₑ * S_33
+τ_12 = νₑ * S_12
+τ_13 = νₑ * S_13
+τ_23 = νₑ * S_23
+τ_11_A = average(τ_11, dims=(2, 3))
+τ_22_A = average(τ_22, dims=(2, 3))
+τ_33_A = average(τ_33, dims=(2, 3))
+τ_12_A = average(τ_12, dims=(2, 3))
+τ_13_A = average(τ_13, dims=(2, 3))
+τ_23_A = average(τ_23, dims=(2, 3))
+
+# 计算式 耗散
+ϵ_11=2*νₑ*S11**2
+ϵ_22=2*νₑ*S22**2
+ϵ_33=2*νₑ*S33**2
+ϵ_12=  νₑ*S12**2
+ϵ_13=  νₑ*S13**2
+ϵ_23=  νₑ*S23**2
+ϵ_11_A = average(ϵ_11, dims=(2, 3))
+ϵ_22_A = average(ϵ_22, dims=(2, 3))
+ϵ_33_A = average(ϵ_33, dims=(2, 3))
+ϵ_12_A = average(ϵ_12, dims=(2, 3))
+ϵ_13_A = average(ϵ_13, dims=(2, 3))
+ϵ_23_A = average(ϵ_23, dims=(2, 3))
+
+
+

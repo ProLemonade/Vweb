@@ -1,0 +1,196 @@
+
+.img-box-more {
+    z-index: 100;
+    overflow: visible;
+    visibility: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 25px;
+    border-radius: 12px;
+    display: flex;
+    background: var(--white);
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+.img-box-more.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+.code-header {
+    gap: 20px;
+    height: 40px;
+    display: flex;
+    padding: 0px 10px 0px 10px;
+    margin-bottom: 10px; 
+    align-items: center;
+}
+.code-header-left,
+.code-header-right {
+    gap: 10px; /* 是内元素的间隔 */
+    width: 50%;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.code-header-right {
+    justify-content: flex-end;
+}
+
+
+.btn-back.icon {
+    min-width: 36px;
+    padding: 12px 10px 8px 3px;
+    color: var(--purple-dark);
+    overflow: hidden;
+    cursor: pointer;
+}
+.code-text {
+    font-size: 16px;
+    margin-right: 10px;
+    color: var(--purple-light);
+    white-space: nowrap; /* 不换行 */
+    text-overflow: ellipsis;
+    min-width: 36px;
+}
+.code-run,
+.code-copy {
+    min-width: 36px;
+    max-height: 36px;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 15px;
+    background: var(--purple-white);
+    color: var(--purple-light);
+    align-items: center;
+    display: flex; 
+}
+.code-copy .icon,
+.code-run .icon{
+    padding: 10px;
+    min-width: 36px;
+    font: 300 18px "FontAwesome";
+    color: var(--purple-light);
+}
+.code-run:active,
+.code-copy:active {
+    transform: scale(0.9);
+}
+.code-copy .code-text::after {
+    content: "Copy";
+}
+.code-copy.copied .code-text::after {
+    content: "Copied";
+}
+
+
+#tags {
+    display: flex;
+    align-items: center;
+    height: 36px;
+    padding: 10px ;
+    background: var(--purple-white);
+    overflow: hidden;
+    border-radius: 15px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.img-box-content {
+    gap: 20px;
+    height: 100%;
+    display: flex;
+    padding: 10px;
+    height: calc(100% - 40px); /* 填满除去header的空间 */
+}
+.code-area, 
+.output-area {
+    width: 50%;
+    height: 100%;
+    border-radius: 15px;
+    background-color: white;
+    box-shadow: 0 0px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+} 
+
+
+#code-editor {
+    height: 100%;
+    pointer-events: auto;
+    position: relative;
+    overflow: hidden;
+}
+.CodeMirror {
+    height: 100%;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+}
+.cm-s-default .cm-keyword {color: #0000FF;}
+.cm-s-default .cm-string {color: #008000;}
+.cm-s-default .cm-comment {color: #808080;}
+.cm-s-default .cm-number {color: #FF8000;}
+
+
+#code-result {
+    height: 100%;
+    padding: 15px;
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#code-result img {
+    max-width: calc(100% - 20px);
+    max-height: calc(100% - 20px);
+    object-fit: contain;
+    border-radius: 8px;
+}
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: auto;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+.CodeMirror-vscrollbar::-webkit-scrollbar,
+.CodeMirror-hscrollbar::-webkit-scrollbar{
+    width: 6px;
+    height: 6px;
+}
+.CodeMirror-vscrollbar::-webkit-scrollbar-track,
+.CodeMirror-hscrollbar::-webkit-scrollbar-track {
+    background: var(--white);
+    border-radius: 10px;
+}
+.CodeMirror-vscrollbar::-webkit-scrollbar-thumb,
+.CodeMirror-hscrollbar::-webkit-scrollbar-thumb {
+    background: var(--blue-white);
+    border-radius: 10px;
+}
+.CodeMirror-vscrollbar::-webkit-scrollbar-thumb:hover,
+.CodeMirror-hscrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--purple-dark);
+}
