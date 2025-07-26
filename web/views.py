@@ -146,7 +146,7 @@ def parse_code_file(file_path: Path):
 
 def visual(request):
     data_items = DataItem.objects.all().values_list('name', flat=True)
-    return render(request, 'visual.html', {
+    return render(request, 'VISUAL.html', {
         'conditions': list(data_items),
     })
 
@@ -162,7 +162,7 @@ def report(request):
                 'url': image_url,
                 'name': filename,
             })
-    return render(request, 'report.html', {'images': image_files})
+    return render(request, 'REPORT.html', {'images': image_files})
 
 
 def test_catalog(request):
@@ -171,7 +171,7 @@ def test_code_simu_refresh(request):
     if request.method == 'POST':
         ProcessExplanation.objects.all().delete()
 
-        md_file = Path(settings.BASE_DIR) / 'web' / 'static' / 'txt' / 'processes.md'
+        md_file = Path(settings.BASE_DIR) / 'web' / 'static' / 'txt' / 'Processes.md'
 
         with open(md_file, 'r', encoding='utf-8') as f:
             content = f.read()
