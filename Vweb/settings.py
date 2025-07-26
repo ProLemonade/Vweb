@@ -69,7 +69,7 @@ ROOT_URLCONF = "Vweb.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / 'templates']
+        "DIRS": [BASE_DIR / 'web'/ 'templates']
         ,
         "APP_DIRS": True,
         "OPTIONS": {
@@ -175,4 +175,9 @@ STATICFILES_FINDERS = [
     'django_plotly_dash.finders.DashAssetFinder',
     'django_plotly_dash.finders.DashComponentFinder',
     'django_plotly_dash.finders.DashAppDirectoryFinder',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://web-production-db1eb.up.railway.app',
+    'https://*.railway.app',
 ]
